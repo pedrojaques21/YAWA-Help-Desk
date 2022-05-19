@@ -22,7 +22,6 @@ app.set('view engine', 'ejs');
 const mongoose = require('mongoose');
 mongoose.connect(process.env.CONN_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
 
-
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -72,7 +71,7 @@ app.get("/chatroom", ensureLoggedIn('/'), (req,res) => {
 
 app.get("/register", ensureLoggedOut('/'), (req, res) => {
 
-  res.render("pages/register", { root: __dirname });
+  res.render("pages/register");
 });
 
 app.post(

@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Passport example</title>
-    </head>
-    <body>
+<%- include('../partials/head'); %>
+<%- include('../partials/navbar'); %>
         <p>Not authenticated</p>
         <form action="/login" method="post">
             <div>
@@ -21,5 +16,4 @@
             </div>
         </form>
         <a href="/register">Register</a>
-    </body>
-</html>
+<%- include('../partials/footer'); %>
