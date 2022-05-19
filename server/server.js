@@ -1,13 +1,12 @@
 const app = require("express")();
 const server = require("http").createServer(app);
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
 
 const sessionMiddleware = session({ secret: "mySecret", resave: false, saveUninitialized: false });
@@ -37,11 +36,9 @@ app.get("/", (req, res) => {
   res.sendFile("../views/index.html", { root: __dirname });
 });
 
-
-
 app.get("/register", ensureLoggedOut('/'), (req, res) => {
 
-  res.sendFile("register.html", { root: __dirname });
+  res.sendFile("../views/register.html", { root: __dirname });
 });
 
 app.post(
@@ -89,8 +86,6 @@ passport.deserializeUser((id, cb) => {
     cb(null, user);
   });
 });
-
-
 
 server.listen(port, () => {
   console.log(`application is running at: http://localhost:${port}`);
