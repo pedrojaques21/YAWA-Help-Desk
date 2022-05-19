@@ -1,6 +1,6 @@
 const app = require("express")();
 const server = require("http").createServer(app);
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -34,14 +34,10 @@ app.get("/", (req, res) => {
   } else {
     console.log("unknown user");
   }
-  res.sendFile(isAuthenticated ? "index.html" : "login.html", { root: __dirname });
+  res.sendFile("../views/index.html", { root: __dirname });
 });
 
-app.get("/chatroom", ensureLoggedIn('/'), (req,res) => {
 
-  res.sendFile(__dirname + '/chatroom.html');
-
-});
 
 app.get("/register", ensureLoggedOut('/'), (req, res) => {
 
@@ -94,48 +90,7 @@ passport.deserializeUser((id, cb) => {
   });
 });
 
-const io = require('socket.io')(server);
 
-// convert a connect middleware to a Socket.IO middleware
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
-io.use(wrap(sessionMiddleware));
-io.use(wrap(passport.initialize()));
-io.use(wrap(passport.session()));
-
-io.use((socket, next) => {
-  if (socket.request.user) {
-    next();
-  } else {
-    next(new Error('unauthorized'))
-  }
-});
-
-io.on('connect', (socket) => {
-  console.log(`new connection ${socket.id}`);
-  socket.on('whoami', (cb) => {
-    cb(socket.request.user.username);
-  });
-
-  const session = socket.request.session;
-  console.log(`saving sid ${socket.id} in session ${session.id}`);
-  session.socketId = socket.id;
-  session.save();
-
-  //Chat
-  socket.on("join", function(){
-    console.log(socket.request.user.username+" joined server");
-    io.emit("update", socket.request.user.username + " has joined the server.");
-  });
-
-
-  socket.on('chat message',function(msg){
-    console.log('message: '+msg);
-    var mensagem = {msg:msg, id:socket.request.user.username};
-    io.emit('chat message', mensagem);
-  })
-
-});
 
 server.listen(port, () => {
   console.log(`application is running at: http://localhost:${port}`);
