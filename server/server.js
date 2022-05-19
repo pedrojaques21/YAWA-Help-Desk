@@ -16,30 +16,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-const mongoose = require('mongoose');
-const myConnectionString = 'mongodb+srv://DBW17:PlX4Qc8nQAsvuraM@clusterdbw.1dbjr.mongodb.net/DBW17?authSource=admin&replicaSet=atlas-bek8xj-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true';
-mongoose.connect(myConnectionString, {useNewUrlParser: true, useUnifiedTopology: true});
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('Connected to Database!');
-});
-
-//Set the schema
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String
-});
-
-//Set the behaviour
-userSchema.methods.verifyPassword = function (password) {
-  return password === this.password;
-}
-
-//Compile the schema into a model
-const User = mongoose.model('User', userSchema);
-
 passport.use(new LocalStrategy(
     function(username, password, done) {
       User.findOne({ username: username }, function (err, user) {
