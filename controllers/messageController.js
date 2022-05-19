@@ -23,7 +23,7 @@ exports.getById = (req, res) => {
 };
 
 exports.patchById = (req, res) => {
-    MessageModel.patchUser(req.params.id, req.body, (doc, err) => {
+    MessageModel.patchMessage(req.params.id, req.body, (doc, err) => {
         if(!err) res.status(200).send(doc);
         else res.status(500).send({message: err.message});
     });

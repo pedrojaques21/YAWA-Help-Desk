@@ -1,7 +1,9 @@
+var express = require('express');
 var userController = require('../controllers/userController');
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
 
-var router = require('express').Router();
-var jsonParser = require('body-parser').json();
+const router = express.Router();
 
 router.get('/', function (req, res) {
     userController.list(req, res);
