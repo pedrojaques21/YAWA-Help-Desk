@@ -1,10 +1,6 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Passport example</title>
-    </head>
-    <body>
+<%- include('../partials/head'); %>
+<%- include('../partials/navbar'); %>
+
         <p>Authenticated!</p>
         <p>Socket ID: <span id="socketId"></span></p>
         <p>Username: <span id="username"></span></p>
@@ -30,5 +26,5 @@
             });
           });
         </script>
-    </body>
-</html>
+
+<%- include('../partials/footer'); %>

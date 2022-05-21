@@ -19,80 +19,17 @@ app.use(passport.session());
 
 app.set('view engine', 'ejs');
 
-const mongoose = require('mongoose');
-mongoose.connect(process.env.CONN_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
+const registerRoutes = require('./routes/registerRoutes');
+app.use('/register', registerRoutes);
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('Connected!');
-});
+const loginRoutes = require('./routes/loginRoutes');
+app.use('/login', loginRoutes);
 
-//Set the schema
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String
-});
-
-//Set the behaviour
-userSchema.methods.verifyPassword = function (password) {
-  return password === this.password;
-}
-
-//Compile the schema into a model
-const User = mongoose.model('User', userSchema);
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-      User.findOne({ username: username }, function (err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        if (!user.verifyPassword(password)) { return done(null, false); }
-        return done(null, user);
-      });
-    }
-));
+const chatroomRoutes = require('./routes/chatroomRoutes');
+app.use('/chatroom', chatroomRoutes);
 
 app.get("/", (req, res) => {
-  const isAuthenticated = !!req.user;
-  if (isAuthenticated) {
-    console.log(`user is authenticated, session is ${req.session.id}`);
-  } else {
-    console.log("unknown user");
-  }
-  res.render(isAuthenticated ? "pages/index" : "pages/login");
-});
-
-app.get("/chatroom", ensureLoggedIn('/'), (req,res) => {
-
-  res.render('pages/chatroom');
-
-});
-
-app.get("/register", ensureLoggedOut('/'), (req, res) => {
-
-  res.render("pages/register");
-});
-
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/",
-  })
-);
-
-app.post("/register",function(req,res){
-
-  //New User in the DB
-  const instance = new User({ username: req.body.username, password: req.body.password });
-  instance.save(function (err, instance) {
-    if (err) return console.error(err);
-
-    //Let's redirect to the login post which has auth
-    res.redirect(307, '/login');
-  });
-
+  res.render('pages/index');
 });
 
 app.post("/logout", (req, res) => {
