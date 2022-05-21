@@ -1,8 +1,10 @@
-const express = require('express');
-const app = express();
-const server = require("http").createServer(app);
 require('dotenv').config();
-const port = process.env.PORT;
+const path = require('path');
+const express = require('express');
+const http = require('http');
+
+const app = express();
+const server = http.createServer(app);
 
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -11,16 +13,14 @@ const LocalStrategy = require("passport-local").Strategy;
 
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
+const sessionMiddleware = session({ secret: "mySecretKey", resave: false, saveUninitialized: false });
 
-const sessionMiddleware = session({ secret: "changeit", resave: false, saveUninitialized: false });
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
-
-app.use(express.static('public'));
 
 //API Routes
 const registerRoutes = require('./routes/registerRoutes');
@@ -36,29 +36,39 @@ app.get("/", (req, res) => {
   res.render('pages/index');
 });
 
-//Socket.io Stuff
-const io = require('socket.io')(server);
+const user =  require('./controllers/userController')
 
-// convert a connect middleware to a Socket.IO middleware
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+    user.findUser(username, password, done);
+  }
+));
+
+passport.serializeUser((user, cb) => {
+  console.log(`SerializeUser ${user.id}`);
+  cb(null, user.id);
+});
+
+passport.deserializeUser((id, cb) => {
+  console.log(`DeserializeUser ${id}`);
+  user.getById(id, (err, user) => {
+    if (err) { return cb(err); }
+    cb(null, user);
+  });
+});
+
+//Socket.io Stuff
+const socketio = require('socket.io');
+const io = socketio(server);
+
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
-
-io.use((socket, next) => {
-  if (socket.request.user) {
-    next();
-  } else {
-    next(new Error('unauthorized'))
-  }
-});
-
-io.on('connect', (socket) => {
-  console.log(`new connection ${socket.id}`);
-  socket.on('whoami', (cb) => {
-    cb(socket.request.user.username);
-  });
+//Run on new connection
+io.on('connection', (socket) => {
+  console.log(`New Connection ${socket.id}`);
 
   const session = socket.request.session;
   console.log(`saving sid ${socket.id} in session ${session.id}`);
@@ -67,19 +77,20 @@ io.on('connect', (socket) => {
 
   //Chat
   socket.on("join", function(){
-    console.log(socket.request.user.username+" joined server");
-    io.emit("update", socket.request.user.username + " has joined the server.");
+    console.log(socket.id+" joined server");
+    io.emit("update", socket.id + " has joined the server.");
   });
 
 
   socket.on('chat message',function(msg){
     console.log('message: '+msg);
-    var mensagem = {msg:msg, id:socket.request.user.username};
+    var mensagem = {msg:msg, id:socket.id};
     io.emit('chat message', mensagem);
   })
-
 });
 
+const port = process.env.PORT || 3000;
+
 server.listen(port, () => {
-  console.log(`application is running at: http://localhost:${port}`);
+  console.log(`Application is running at: http://localhost:${port}`);
 });

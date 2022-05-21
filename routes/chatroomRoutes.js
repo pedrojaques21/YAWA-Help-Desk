@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('pages/chatroomV2')
+  res.render('pages/chatroom')
 });
 
 module.exports = router;

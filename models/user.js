@@ -20,6 +20,12 @@ exports.findById = (id, cb) => {
         .catch(err => cb(null, err));
 };
 
+exports.findUser = (username, cb) => {
+    User.findOne({username: username}, { _id:0, username:1, password:1, email:1})
+        .exec()
+        .catch(err => cb(null, err));
+};
+
 exports.createUser = (userData, cb) => {
 
     const user = new User(userData);
@@ -51,4 +57,8 @@ exports.removeById = (userId, cb) => {
         .then(() => cb())
         .catch(err => cb(err));
 
+};
+
+exports.verifyPassword = (password) => {
+    return password === this.password;
 };
