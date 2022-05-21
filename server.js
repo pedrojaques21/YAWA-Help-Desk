@@ -1,4 +1,5 @@
-const app = require("express")();
+const express = require('express');
+const app = express();
 const server = require("http").createServer(app);
 require('dotenv').config();
 const port = process.env.PORT;
@@ -19,6 +20,9 @@ app.use(passport.session());
 
 app.set('view engine', 'ejs');
 
+app.use(express.static('public'));
+
+//API Routes
 const registerRoutes = require('./routes/registerRoutes');
 app.use('/register', registerRoutes);
 
@@ -32,31 +36,7 @@ app.get("/", (req, res) => {
   res.render('pages/index');
 });
 
-app.post("/logout", (req, res) => {
-  console.log(`logout ${req.session.id}`);
-  const socketId = req.session.socketId;
-  if (socketId && io.of("/").sockets.get(socketId)) {
-    console.log(`forcefully closing socket ${socketId}`);
-    io.of("/").sockets.get(socketId).disconnect(true);
-  }
-  req.logout();
-  res.cookie("connect.sid", "", { expires: new Date() });
-  res.redirect("/");
-});
-
-passport.serializeUser((user, cb) => {
-  console.log(`serializeUser ${user.id}`);
-  cb(null, user.id);
-});
-
-passport.deserializeUser((id, cb) => {
-  console.log(`deserializeUser ${id}`);
-  User.findById(id, function (err, user) {
-    if (err) { return cb(err); }
-    cb(null, user);
-  });
-});
-
+//Socket.io Stuff
 const io = require('socket.io')(server);
 
 // convert a connect middleware to a Socket.IO middleware
