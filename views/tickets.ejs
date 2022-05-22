@@ -1,0 +1,42 @@
+<%- include('./partials/navbar'); %>
+
+    <form id="form" action="/" method="GET">
+        <div>
+            <label for="topic">Topic</label>
+            <input id="topic" name="topic" type="text" required>
+        </div>
+        <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required>
+        </div>
+        <div>
+            <label for="phone_number">Phone Number (optional)</label>
+            <input id="phone_number" name="phone_number" type="text">
+        </div>
+        <div>
+            <label for="e_mail">E-mail</label>
+            <input id="e_mail" name="e_mail" type="text" required>
+        </div>
+        <div>
+            <label for="message">Message</label>
+            <input id="message" name="message" type="text" required style="height:100px">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+<script>
+    //Get the data from each element on the form.
+    const topic = document.getElementById('topic')
+    const name = document.getElementById('name')
+    const phone_number = document.getElementById('phone_number')
+    const e_mail = document.getElementById('e_mail')
+    const message = document.getElementById('message')
+
+    let data =
+        '\r Topic: ' + topic.value + ' \r\n ' +
+        '\r Name: ' + name.value + ' \r\n ' +
+        if (phone_number != '' && phone_number != null){
+            '\r Topic: ' + topic.value + ' \r\n ' +
+        }
+        '\r E-mail: ' + e_mail.value + ' \r\n ' +
+        '\r Message: ' + message.value + ' \r\n ' ;
+

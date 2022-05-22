@@ -22,6 +22,7 @@ const indexRouter = require('./routes/index')
 const registerRoutes = require('./routes/register');
 const loginRoutes = require('./routes/login');
 const chatroomRoutes = require('./routes/chatroom');
+const ticketsRouter = require('./routes/tickets')
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -34,11 +35,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-//API Routes
 app.use('/', indexRouter)
 app.use('/register', registerRoutes);
 app.use('/login', loginRoutes);
 app.use('/chatroom', chatroomRoutes);
+app.use('/tickets', ticketsRouter)
 
 const user =  require('./controllers/userController')
 const initializePassport = require('./passport-config')
