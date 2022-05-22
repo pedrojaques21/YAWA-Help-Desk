@@ -1,7 +1,9 @@
 require('dotenv').config();
+
 const path = require('path');
 const express = require('express');
 const http = require('http');
+const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,12 +17,29 @@ const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
 const sessionMiddleware = session({ secret: "mySecretKey", resave: false, saveUninitialized: false });
 
+//My Routers
+const indexRouter = require('./routes/index')
+
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+app.set('layout', 'layouts/layout')
+app.use(expressLayouts);
+app.use(express.static('public'));
+
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'ejs');
+
+app.use('/', indexRouter)
+
+const user =  require('./controllers/userController')
+const initializePassport = require('./passport-config')
+initializePassport(
+  passport,
+  username => user.findUser(username, res),
+  id => user.getById(id, res)
+);
 
 //API Routes
 const registerRoutes = require('./routes/registerRoutes');
@@ -31,31 +50,6 @@ app.use('/login', loginRoutes);
 
 const chatroomRoutes = require('./routes/chatroomRoutes');
 app.use('/chatroom', chatroomRoutes);
-
-app.get("/", (req, res) => {
-  res.render('pages/index');
-});
-
-const user =  require('./controllers/userController')
-
-passport.use(new LocalStrategy(
-  (username, password, done) => {
-    user.findUser(username, password, done);
-  }
-));
-
-passport.serializeUser((user, cb) => {
-  console.log(`SerializeUser ${user.id}`);
-  cb(null, user.id);
-});
-
-passport.deserializeUser((id, cb) => {
-  console.log(`DeserializeUser ${id}`);
-  user.getById(id, (err, user) => {
-    if (err) { return cb(err); }
-    cb(null, user);
-  });
-});
 
 //Socket.io Stuff
 const socketio = require('socket.io');
@@ -89,8 +83,6 @@ io.on('connection', (socket) => {
   })
 });
 
-const port = process.env.PORT || 3000;
-
-server.listen(port, () => {
-  console.log(`Application is running at: http://localhost:${port}`);
+server.listen(process.env.PORT || 3000, () => {
+  console.log(`Application is running at: http://localhost:${process.env.PORT || 3000}`);
 });

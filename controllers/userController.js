@@ -37,11 +37,9 @@ exports.removeById = (req, res) => {
     });
 };
 
-exports.findUser = (username, password, done) => {
-    UserModel.findUser(username, (user, err) => {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        if (!user.verifyPassword(password)) { return done(null, false); }
-        return done(null, user);
+exports.findUser = (req, res) => {
+    UserModel.findUser(req.params.username, (doc, err) => {
+        if(!err) res.status(200).send(doc);
+        else res.status(500).send({message: err.message});
     });
   };
