@@ -1,21 +1,3 @@
-$(document).ready(function () {
-
-  const socket = io();
-
-  socket.on('message', msg => {
-    console.log(msg);
-  });
-
-  $('#message_form').on('submit', () => {
-    socket.emit('newChatMessage', $('#msg').val());
-  });
-
-  socket.on('newMessage', function (msg) {
-    $('#messages').append('<li>' + (msg.id + ":" + msg.msg) + '</li>');
-    window.scrollTo(0, document.body.scrollHeight);
-  });
-});
-
 function intToRGB(i) {
   var c = (i & 0x00FFFFFF)
       .toString(16)

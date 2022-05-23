@@ -1,15 +1,14 @@
 require('dotenv').config();
 
-const path = require('path');
 const express = require('express');
 const http = require('http');
 const expressLayouts = require('express-ejs-layouts');
+const bodyParser = require("body-parser");
 
 const app = express();
 const server = http.createServer(app);
 
 const session = require("express-session");
-const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
@@ -28,9 +27,9 @@ app.set('views', __dirname + '/views');
 app.set('layout', 'layouts/layout')
 app.use(expressLayouts);
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 
 app.use(sessionMiddleware);
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
