@@ -51,11 +51,15 @@ initializePassport(
 const socketio = require('socket.io');
 const io = socketio(server);
 
+const Chatroom = require('./models/chatroom')
+const Message = require('./models/message')
+
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
+
 //Run on new connection
 io.on('connection', (socket) => {
   console.log(`New Connection ${socket.id}`);
@@ -66,15 +70,24 @@ io.on('connection', (socket) => {
   session.save();
 
   //Chat
-  socket.on("join", function(){
-    console.log(socket.id+" joined server");
+  socket.on("join", () => {
+    console.log(socket.id + " joined server");
     io.emit("update", socket.id + " has joined the server.");
   });
 
 
-  socket.on('chat message',function(msg){
+  socket.on('chat message', async (msg) => {
     console.log('message: '+msg);
     var mensagem = {msg:msg, id:socket.id};
+    const message = new Message({
+      author: mensagem.id,
+      message: mensagem.msg
+    })
+    try {
+      const newMessage = await message.save()
+    } catch (err) {
+      console.log(err)
+    }
     io.emit('chat message', mensagem);
   })
 });

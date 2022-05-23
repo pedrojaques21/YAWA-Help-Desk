@@ -1,11 +1,20 @@
 const express = require('express');
+const { route } = require('.');
+const chatroom = require('../models/chatroom');
 const router = express.Router();
 const Chatroom = require('../models/chatroom')
+const Message = require('../models/message')
 
 router.get('/', async (req, res) => {
+  let searchOptions = {};
+  if (req.query.title != null && req.query.title !== '') {
+    searchOptions.title = new RegExp(req.query.title, 'i')
+  }
   try {
-    const chatrooms = await Chatroom.find({})
-    res.render('chatroom/index', { chatrooms : chatrooms })
+    const chatrooms = await Chatroom.find(searchOptions)
+    res.render('chatroom/index', { 
+      chatrooms: chatrooms, 
+      searchOptions: req.query })
   } catch (err) {
     res.redirect('/')
   }
@@ -36,4 +45,15 @@ router.post('/', async (req, res) => {
   }
 })
 
+// router.post('/livechat', async (req, res) => {
+//   const message = new Message({
+//     author: 'User Test',
+//     message: req.body.message
+//   })
+//   try {
+//     const newMessage = await message.save()
+//   } catch (err) {
+//     console.log(err)
+//   }
+// })
 module.exports = router;

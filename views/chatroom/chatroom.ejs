@@ -4,9 +4,9 @@
     </ul>
   </div>
   <hr />
-  <form id="message_form">
-    <input style="width: 90%" id="m" autocomplete="off" />
-    <button>Send Message</button>
+  <form id="message_form" method="post">
+    <input style="width: 90%" id="m" autocomplete="off" name="message"/>
+    <button type="submit">Send Message</button>
   </form>
 <script src="/socket.io/socket.io.js"></script>
-<script src="js/chatroom.js"></script>
+<script src="../js/chatroom.js"></script>
