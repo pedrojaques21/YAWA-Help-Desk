@@ -1,0 +1,16 @@
+<h2>Search Tickets</h2>
+<form action="/tickets" method="GET">
+    <label>Name</label>
+    <input type="text" name="name" value="<%= searchOptions.name %>">
+    <button type="submit">Search</button>
+</form>
+<br>
+<% tickets.forEach(ticket => {%>
+    <div>Topic: <%= ticket.topic %></div>
+    <div>Name: <%= ticket.name %></div>
+    <div>Phone Number: <%= ticket.phone_number %></div>
+    <div>E-mail: <%= ticket.e_mail %></div>
+    <div>Message: <%= ticket.message %></div>
+    <br>
+    <br>
+<% }) %>

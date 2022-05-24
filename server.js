@@ -31,7 +31,7 @@ app.use(expressLayouts);
 app.use(express.static('public'));
 
 app.use(sessionMiddleware);
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
