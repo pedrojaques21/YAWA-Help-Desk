@@ -23,6 +23,8 @@ const registerRoutes = require('./routes/register');
 const loginRoutes = require('./routes/login');
 const chatroomRoutes = require('./routes/chatroom');
 const ticketsRouter = require('./routes/tickets')
+const faqsRouter = require('./routes/faqs')
+
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -42,6 +44,7 @@ app.use('/register', registerRoutes);
 app.use('/login', loginRoutes);
 app.use('/chatroom', chatroomRoutes);
 app.use('/tickets', ticketsRouter)
+app.use('/faqs', faqsRouter)
 
 const user =  require('./controllers/userController')
 const initializePassport = require('./passport-config')

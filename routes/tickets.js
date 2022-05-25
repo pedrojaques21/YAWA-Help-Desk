@@ -4,15 +4,15 @@ const Ticket = require('../models/ticket')
 
 //All Tickets Route
 router.get('/', async (req,res) =>{
-    let searchOptions = {}
-    if (req.query.name != null && req.query.name !== '') {
-        searchOptions.name = new RegExp(req.query.name, 'i')
+    let search_Options = {}
+    if (req.query.topic != null && req.query.topic !== '') {
+        search_Options.topic = new RegExp(req.query.topic, 'i')
     }
     try {
-        const tickets = await Ticket.find(searchOptions)
+        const tickets = await Ticket.find(search_Options)
         res.render('tickets/all', {
             tickets: tickets,
-            searchOptions: req.query
+            search_Options: req.query
         })
 
     } catch {
