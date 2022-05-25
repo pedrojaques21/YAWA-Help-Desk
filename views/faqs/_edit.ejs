@@ -1,0 +1,7 @@
+<h2>Edit Faq</h2>
+<form action="/faqs/<%= faq.id %>?_method=PUT"
+      method="POST">
+    <%- include('_form_fields_')%>
+    <a href="/faqs/<%= faq.id %>">Cancel</a>
+    <button type="submit">Update</button>
+</form>

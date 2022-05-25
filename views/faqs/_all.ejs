@@ -1,0 +1,15 @@
+<h2>Search Faqs</h2>
+<form action="/faqs" method="GET">
+    <label>Topic</label>
+    <input type="text" name="topic" value="<%= searchOptions_.topic %>">
+    <button type="submit">Search</button>
+</form>
+<br>
+<% faqs.forEach(faq => {%>
+    <div><%= faq.topic %></div>
+    <a href="/faqs/<%= faq.id %>">View</a>
+    <a href="/tickets/<%= faq.id %>/edit">Edit</a>
+    <%- include('../partials/deleteForm', { url: `/faqs/${faq.id}`}) %>
+    <br>
+    <br>
+<% }) %>

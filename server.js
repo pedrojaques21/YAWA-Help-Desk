@@ -48,7 +48,8 @@ app.use('/register', ensureLoggedOut('/'), registerRoutes);
 app.use('/login', ensureLoggedOut('/'), loginRoutes);
 app.use('/logout', ensureLoggedIn('/'), logoutRoutes);
 app.use('/chatroom', chatroomRoutes);
-app.use('/tickets', ticketsRouter);
+app.use('/tickets', ticketsRouter)
+app.use('/faqs', faqsRouter)
 
 //Socket.io Stuff
 const io = require('socket.io')(server);
