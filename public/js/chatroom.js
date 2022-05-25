@@ -24,12 +24,12 @@ $(document).ready(function () {
   socket.emit("join");
 
   $('form').submit(function () {
-      socket.emit('chat message', $('#m').val());
+      socket.emit('new-chat-message', $('#chatroomTitle').val(), $('#m').val());
       console.log($('#m').val());
       $('#m').val('');
       return false;
   });
-  socket.on('chat message', function (msg) {
+  socket.on('new-chat-message', (msg) => {
       $('#messages').append('<li style=background-color:#' + hashCode(msg.id) + '>' + (msg.id + ":" + msg.msg) + '</li>');
       window.scrollTo(0,document.body.scrollHeight);
   });

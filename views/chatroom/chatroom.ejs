@@ -1,12 +1,14 @@
-  <div id="chat">
-    <ul id="messages">
-      <%-  %> 
-    </ul>
-  </div>
-  <hr />
-  <form id="message_form" method="post">
-    <input style="width: 90%" id="m" autocomplete="off" name="message"/>
-    <button type="submit">Send Message</button>
-  </form>
+<div>
+  <h2><%= chatroomTitle %></h2>
+</div>
+<div id="chat">
+  <ul id="messages"></ul>
+</div>
+<hr />
+<form id="message_form" method="post">
+  <input type="hidden" id="chatroomTitle" value="<%= chatroomTitle %>" />
+  <input style="width: 90%" id="m" autocomplete="off" name="message" />
+  <button type="submit">Send Message</button>
+</form>
 <script src="/socket.io/socket.io.js"></script>
 <script src="../js/chatroom.js"></script>

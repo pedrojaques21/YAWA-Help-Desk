@@ -1,9 +1,6 @@
 const express = require('express');
-const { route } = require('.');
-const chatroom = require('../models/chatroom');
 const router = express.Router();
 const Chatroom = require('../models/chatroom')
-const Message = require('../models/message')
 
 router.get('/', async (req, res) => {
   let searchOptions = {};
@@ -14,7 +11,8 @@ router.get('/', async (req, res) => {
     const chatrooms = await Chatroom.find(searchOptions)
     res.render('chatroom/index', { 
       chatrooms: chatrooms, 
-      searchOptions: req.query })
+      searchOptions: req.query
+    })
   } catch (err) {
     res.redirect('/')
   }
@@ -25,17 +23,25 @@ router.get('/new', (req, res) => {
   res.render('chatroom/new', { chatroom: new Chatroom() })
 });
 
-router.get('/livechat', (req, res) => {
-  res.render('chatroom/chatroom')
+router.get('/:room', async (req, res) => {
+  if ( await Chatroom.findOne({ title: req.params.room }) == null) {
+    return res.redirect('/chatroom')
+  }
+  res.render('chatroom/chatroom', {
+    chatroomTitle: req.params.room
+  })
 });
 
 router.post('/', async (req, res) => {
+  if ( await Chatroom.findOne({ title: req.body.title }) != null) {
+    return res.redirect('/chatroom')
+  }
   const chatroom = new Chatroom({
     title: req.body.title
   })
   try {
     const newChatroom = await chatroom.save()
-    res.redirect('chatroom/livechat')
+    res.redirect('chatroom/' + req.body.title)
   } catch (err) {
     res.render('chatroom/new', { 
         chatroom: chatroom,
@@ -45,15 +51,4 @@ router.post('/', async (req, res) => {
   }
 })
 
-// router.post('/livechat', async (req, res) => {
-//   const message = new Message({
-//     author: 'User Test',
-//     message: req.body.message
-//   })
-//   try {
-//     const newMessage = await message.save()
-//   } catch (err) {
-//     console.log(err)
-//   }
-// })
 module.exports = router;

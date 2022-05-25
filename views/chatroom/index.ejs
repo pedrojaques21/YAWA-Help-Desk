@@ -10,5 +10,8 @@
 </form>
 <br>
 <% chatrooms.forEach(chatroom => { %>
-  <div><%= chatroom.title %> </div>
+  <div>
+    <%= chatroom.title %> 
+    <a href="/chatroom/<%= chatroom.title %>"> Join</a>
+  </div>
 <%  }); %> 

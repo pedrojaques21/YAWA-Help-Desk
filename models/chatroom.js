@@ -1,17 +1,20 @@
 const mongoose = require('./mongooseConfigs').mongoose;
-const Schema = mongoose.Schema;
 
 const chatroomSchema = new mongoose.Schema({
     title: {
       type: String,
       required: true
     },
-    messages: {
-      type: Schema.Types.ObjectId,
-      ref: 'message',
+    messages: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message',
       required: false
+    }],
+    active: {
+      type: Boolean,
+      default: 1
     },
-    date: {
+    createdDate: {
         type: Date,
         default: Date.now
     }
