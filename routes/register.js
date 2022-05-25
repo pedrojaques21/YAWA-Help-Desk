@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 router.get('/', (req, res) => {
@@ -7,10 +8,11 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+  const hashedPassword = await bcrypt.hash(req.body.password, 10)
   const user = new User({
     email: req.body.email,
     username: req.body.username,
-    password: req.body.password    
+    password: hashedPassword    
   })
   try {
     const newUser = await user.save()
