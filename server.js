@@ -42,6 +42,7 @@ const loginRoutes = require('./routes/login');
 const logoutRoutes = require('./routes/logout');
 const chatroomRoutes = require('./routes/chatroom');
 const ticketsRouter = require('./routes/tickets');
+const faqsRouter = require('./routes/faqs')
 
 app.use('/', indexRouter);
 app.use('/register', ensureLoggedOut('/'), registerRoutes);
