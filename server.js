@@ -1,15 +1,14 @@
 require('dotenv').config();
 
-const path = require('path');
 const express = require('express');
 const http = require('http');
 const expressLayouts = require('express-ejs-layouts');
+const bodyParser = require("body-parser");
 
 const app = express();
 const server = http.createServer(app);
 
 const session = require("express-session");
-const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const methodOverride = require('method-override')
@@ -30,6 +29,7 @@ app.set('views', __dirname + '/views');
 app.set('layout', 'layouts/layout')
 app.use(expressLayouts);
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
@@ -52,34 +52,51 @@ initializePassport(
 );
 
 //Socket.io Stuff
-const socketio = require('socket.io');
-const io = socketio(server);
+const io = require('socket.io')(server);
+
+const Chatroom = require('./models/chatroom')
+const Message = require('./models/message')
 
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 io.use(wrap(sessionMiddleware));
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.session()));
-//Run on new connection
-io.on('connection', (socket) => {
-  console.log(`New Connection ${socket.id}`);
 
+//Run on new connection
+io.on('connection', socket => {
   const session = socket.request.session;
   console.log(`saving sid ${socket.id} in session ${session.id}`);
   session.socketId = socket.id;
   session.save();
 
   //Chat
-  socket.on("join", function(){
-    console.log(socket.id+" joined server");
+  socket.on("join", () => {
+    console.log(socket.id + " joined server");
     io.emit("update", socket.id + " has joined the server.");
   });
 
 
-  socket.on('chat message',function(msg){
-    console.log('message: '+msg);
-    var mensagem = {msg:msg, id:socket.id};
-    io.emit('chat message', mensagem);
+  socket.on('new-chat-message', async (room, msg) => {
+    console.log( 'message: ' + msg );
+    var newMessage = {
+      msg: msg, 
+      id: socket.id 
+    };
+    const message = new Message({
+      author: newMessage.id,
+      message: newMessage.msg
+    })
+    try {
+      const createdMessage = await message.save()
+      const chatroom = await Chatroom.updateOne(
+        { title: room },
+        {$push: {messages: createdMessage.id}}
+      )
+    } catch (err) {
+      console.log(err)
+    }
+    io.emit('new-chat-message', newMessage);
   })
 });
 

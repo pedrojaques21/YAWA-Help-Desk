@@ -1,19 +1,27 @@
 const express = require('express');
-
-const userController = require('../controllers/userController');
-
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
-
 const router = express.Router();
+const User = require('../models/user')
 
 router.get('/', (req, res) => {
   res.render('register')
 });
 
-router.post('/', jsonParser, (req, res) => {
-  userController.insert(req, res);
-  res.redirect('/chatroom')
-});
+router.post('/', async (req, res) => {
+  const user = new User({
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password    
+  })
+  try {
+    const newUser = await user.save()
+    res.redirect('/login')
+  } catch (err) {
+    res.render('register', { 
+        user: user,
+        errorMessage: 'Error creating User.'
+    })
+    console.log(err)
+  }
+})
 
 module.exports = router;
