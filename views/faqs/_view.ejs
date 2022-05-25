@@ -1,0 +1,5 @@
+<h2><%= faq.topic %></h2>
+<div>Message: <%= faq.message %></div>
+<a href="/faqs/<%= faq.id %>/edit">Edit</a>
+<%- include ('../partials/deleteForm', { url: `/faqs/${faq.id}`}) %>
+
