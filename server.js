@@ -12,6 +12,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const methodOverride = require('method-override')
 
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
@@ -34,6 +35,7 @@ app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(methodOverride('_method'))
 
 app.use('/', indexRouter)
 app.use('/register', registerRoutes);

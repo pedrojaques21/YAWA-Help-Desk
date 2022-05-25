@@ -9,10 +9,6 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    topic: {
-        type: String,
-        required: true
-    },
     phone_number: {
         type: String,
         required: false
@@ -25,7 +21,10 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-
 })
 
 module.exports = mongoose.model('Ticket', ticketSchema)
+
+
+
+

@@ -1,0 +1,8 @@
+<h2><%= ticket.topic %></h2>
+<div>Name: <%= ticket.name %></div>
+<div>Phone Number: <%= ticket.phone_number %></div>
+<div>E-mail: <%= ticket.e_mail %></div>
+<div>Message: <%= ticket.message %></div>
+<a href="/tickets/<%= ticket.id %>/edit">Edit</a>
+<%- include ('../partials/deleteForm', { url: `/tickets/${ticket.id}`}) %>
+
