@@ -46,13 +46,6 @@ app.use('/chatroom', chatroomRoutes);
 app.use('/tickets', ticketsRouter)
 app.use('/faqs', faqsRouter)
 
-const user =  require('./controllers/userController')
-const initializePassport = require('./passport-config')
-initializePassport(
-  passport,
-  username => user.findUser(username, res),
-  id => user.getById(id, res)
-);
 
 //Socket.io Stuff
 const io = require('socket.io')(server);
