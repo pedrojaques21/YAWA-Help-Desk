@@ -1,0 +1,7 @@
+<h2>Edit Ticket</h2>
+<form action="/tickets/<%= ticket.id %>?_method=PUT"
+      method="POST">
+    <%- include('_form_fields')%>
+    <a href="/tickets/<%= ticket.id %>">Cancel</a>
+    <button type="submit">Update</button>
+</form>

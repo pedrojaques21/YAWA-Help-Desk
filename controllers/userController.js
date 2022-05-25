@@ -1,5 +1,6 @@
 const UserModel = require('../models/user');
 
+
 //The callback code could have been refactored in to a single function
 exports.insert = (req, res) => {
     UserModel.createUser(req.body, (doc, err) => {
@@ -35,3 +36,10 @@ exports.removeById = (req, res) => {
         else res.status(500).send({message: err.message});
     });
 };
+
+exports.findUser = (req, res) => {
+    UserModel.findUser(req.params.username, (doc, err) => {
+        if(!err) res.status(200).send(doc);
+        else res.status(500).send({message: err.message});
+    });
+  };
