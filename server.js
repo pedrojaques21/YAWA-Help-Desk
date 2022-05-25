@@ -8,6 +8,7 @@ const passport = require("passport");
 const flash = require('express-flash');
 const session = require("express-session");
 const methodOverride = require('method-override');
+const emojis = require('emojis');
 
 const app = express();
 const server = http.createServer(app);
@@ -38,16 +39,16 @@ app.use(passport.session());
 const indexRouter = require('./routes/index');
 const registerRoutes = require('./routes/register');
 const loginRoutes = require('./routes/login');
+const logoutRoutes = require('./routes/logout');
 const chatroomRoutes = require('./routes/chatroom');
 const ticketsRouter = require('./routes/tickets');
 
 app.use('/', indexRouter);
-app.use('/register', registerRoutes);
-app.use('/login', loginRoutes);
+app.use('/register', ensureLoggedOut('/'), registerRoutes);
+app.use('/login', ensureLoggedOut('/'), loginRoutes);
+app.use('/logout', ensureLoggedIn('/'), logoutRoutes);
 app.use('/chatroom', chatroomRoutes);
 app.use('/tickets', ticketsRouter);
-
-
 
 //Socket.io Stuff
 const io = require('socket.io')(server);
@@ -63,6 +64,9 @@ io.use(wrap(passport.session()));
 
 //Run on new connection
 io.on('connection', socket => {
+  
+  console.log(`new connection ${socket.id}`);
+
   const session = socket.request.session;
   console.log(`saving sid ${socket.id} in session ${session.id}`);
   session.socketId = socket.id;
@@ -76,9 +80,9 @@ io.on('connection', socket => {
 
 
   socket.on('new-chat-message', async (room, msg) => {
-    console.log( 'message: ' + msg );
+    console.log( 'message: ' + emojis.unicode(msg) );
     var newMessage = {
-      msg: msg, 
+      msg: emojis.unicode(msg), 
       id: socket.id 
     };
     const message = new Message({

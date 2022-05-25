@@ -18,26 +18,35 @@
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="/chatroom">All</a></li>
             <li><a class="dropdown-item" href="/chatroom/new">Create</a></li>
-            <li><a class="dropdown-item" href="/chatroom/livechat">Live Chat</a></li>
           </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/tickets">All Ticket</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/tickets/new">New Ticket</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="/tickets" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Tickets
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/tickets">All</a></li>
+            <li><a class="dropdown-item" href="/tickets/new">Create</a></li>
+          </ul>
         </li>
         <li class="nav-item">
           <a class="nav-link active" href="/faq">FAQ</a>
         </li>
       </ul>
       <ul class="navbar-nav justify-content-end">
+        <% if (!locals.user) { %> 
         <li class="nav-item">
           <a class="nav-link active" href="/login">Login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" href="/register">Register</a>
         </li>
+        <% } %> 
+        <% if (locals.user) { %> 
+            <li class="nav-item">              
+              <a class="nav-link active" href="/logout">Log Out</a>
+            </li>
+        <% } %> 
       </ul>
       <!-- <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
