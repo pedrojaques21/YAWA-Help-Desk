@@ -11,6 +11,7 @@ const server = http.createServer(app);
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const methodOverride = require('method-override')
 
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 const ensureLoggedOut = require('connect-ensure-login').ensureLoggedOut;
@@ -21,6 +22,7 @@ const indexRouter = require('./routes/index')
 const registerRoutes = require('./routes/register');
 const loginRoutes = require('./routes/login');
 const chatroomRoutes = require('./routes/chatroom');
+const ticketsRouter = require('./routes/tickets')
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -30,14 +32,16 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 
 app.use(sessionMiddleware);
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(methodOverride('_method'))
 
-//API Routes
 app.use('/', indexRouter)
 app.use('/register', registerRoutes);
 app.use('/login', loginRoutes);
 app.use('/chatroom', chatroomRoutes);
+app.use('/tickets', ticketsRouter)
 
 const user =  require('./controllers/userController')
 const initializePassport = require('./passport-config')
